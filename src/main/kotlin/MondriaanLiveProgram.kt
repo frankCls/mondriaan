@@ -40,7 +40,17 @@ class Container(
     }
 
     override fun draw() {
-        rectangles.forEach { it.draw() }
+        val batch = drawer.rectangleBatch {
+            for(rect in rectangles) {
+//                drawer.fill = rect.color
+//                drawer.stroke = rect.borderColor
+//                drawer.strokeWeight = 1.0
+//                drawer.rectangle(rect.x, rect.y, rect.width, rect.height)
+                rect.draw()
+            }
+
+        }
+        drawer.rectangles(batch)
     }
 
     override fun toString(): String {
@@ -55,10 +65,10 @@ enum class MovingOrientation {
 
 class Rect(
     private val drawer: Drawer,
-    private var x: Double,
-    private var y: Double,
-    private val width: Double,
-    private val height: Double,
+    internal var x: Double,
+    internal var y: Double,
+    internal val width: Double,
+    internal val height: Double,
     val color: ColorRGBa,
     val borderColor: ColorRGBa = ColorRGBa.BLACK,
     val markedForAnimation: Boolean = false,
