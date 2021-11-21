@@ -1,3 +1,4 @@
+import org.openrndr.KEY_ENTER
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.Drawer
@@ -14,6 +15,7 @@ abstract class DrawableWithContext(drawer: Drawer) : Drawable
 
 interface Drawable {
     fun draw()
+    fun resetPosition()
 }
 
 class Container(
@@ -41,16 +43,16 @@ class Container(
 
     override fun draw() {
         val batch = drawer.rectangleBatch {
-            for(rect in rectangles) {
-//                drawer.fill = rect.color
-//                drawer.stroke = rect.borderColor
-//                drawer.strokeWeight = 1.0
-//                drawer.rectangle(rect.x, rect.y, rect.width, rect.height)
+            for (rect in rectangles) {
                 rect.draw()
             }
 
         }
         drawer.rectangles(batch)
+    }
+
+    override fun resetPosition() {
+        rectangles.forEach { it.resetPosition() }
     }
 
     override fun toString(): String {
@@ -69,14 +71,17 @@ class Rect(
     internal var y: Double,
     internal val width: Double,
     internal val height: Double,
-    val color: ColorRGBa,
+    var color: ColorRGBa,
     val borderColor: ColorRGBa = ColorRGBa.BLACK,
     val markedForAnimation: Boolean = false,
     var movingOrientation: MovingOrientation,
     var speed: Double = 2.0,
-    var xDirection: Int = 1,
-    var yDirection: Int = 1,
+    var xDirection: Int = arrayOf(1, -1).random(),
+    var yDirection: Int = arrayOf(1, -1).random(),
 ) : DrawableWithContext(drawer) {
+
+    private val initialPosition: Pair<Double, Double> = Pair(x, y)
+
     override fun draw() {
         if (markedForAnimation) {
             if (this.x > drawer.width) {
@@ -100,6 +105,13 @@ class Rect(
         drawer.stroke = borderColor
         drawer.strokeWeight = 1.0
         drawer.rectangle(x, y, width, height)
+    }
+
+    override fun resetPosition() {
+        x = initialPosition.first
+        y = initialPosition.second
+        xDirection = arrayOf(1, -1).random()
+        yDirection = arrayOf(1, -1).random()
     }
 
     override fun toString(): String {
@@ -147,7 +159,6 @@ fun initializeContainers(
         }
         tempY += y
     }
-//    containers.forEach { println(it.toString()) }
     return containers
 }
 
@@ -173,16 +184,15 @@ fun initializeRects(
                     height = y,
                     colors.random(),
                     markedForAnimation = nextBoolean(),
-                    movingOrientation = if (nextBoolean()) MovingOrientation.HORIZONTAL else MovingOrientation.VERTICAL,
-                    speed = arrayOf(0.5, 1.0, 2.0, 3.0, 4.0, 5.0).random()
+                    movingOrientation = if (x > y) MovingOrientation.HORIZONTAL else MovingOrientation.VERTICAL,
+                    speed = arrayOf(0.5, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0).random()
                 )
             )
             tempX += x
         }
         tempY += y
     }
-//    rects.forEach { println(it.toString()) }
-    return rects
+    return rects.sortedBy { it.speed }
 }
 
 fun main() = application {
@@ -210,8 +220,25 @@ fun main() = application {
             containers.forEach {
                 it.draw()
             }
-            drawer.rectangleBatch {  }
+            drawer.rectangleBatch { }
         }
+
+
+        mouse.buttonUp.listen {
+            containers.forEach {
+                it.rectangles.forEach { rect -> rect.color = colors.random() }
+            }
+        }
+
+        keyboard.keyDown.listen {
+            if (it.key == KEY_ENTER) {
+                containers.forEach {
+                    it.resetPosition()
+                }
+            }
+        }
+
+
     }
 }
 
