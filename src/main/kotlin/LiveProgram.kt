@@ -251,7 +251,7 @@ fun main() = application {
         }
 
         keyboard.keyDown.listen {
-            if (it.key == KEY_F3) {
+            if (it.key == KEY_ENTER) {
                 containers.forEach {
                     it.resetPosition()
                     it.resetSpeed()
@@ -279,7 +279,7 @@ fun main() = application {
                     }
                 }
             }
-            if (it.key == KEY_ENTER) {
+            if (it.key == KEY_F3) {
                 containers = initializeSketch(drawer, recursive, colors)
             }
             if (it.key == KEY_F4) {
