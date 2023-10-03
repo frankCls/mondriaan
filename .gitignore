@@ -3,3 +3,7 @@ build
 out
 .idea
 .gradle
+
+
+hs_err_pid*
+ffmpegOutput.txt
