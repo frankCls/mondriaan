@@ -1,3 +1,6 @@
+# Mondriaan painting generation/animation
+
+
 # OPENRNDR template project
 A feature rich template for creating OPENRNDR programs based on Gradle/Kts
 
@@ -16,9 +19,3 @@ You will find some [basic instructions](https://guide.openrndr.org/#/02_Getting_
 
 ## Cross builds
 To create runnable jars for a platform different from the platform you use to build one uses `./gradlew jar --PtargetPlatform=<platform>`. The supported platforms are `windows`, `macos`, `linux-x64` and `linux-arm64`. Note that the `linux-arm64` platform will only work with OPENRNDR snapshot builds from master and OPENRNDR 0.3.39 (a future version).
-
-## Github Actions
-
-This repository contains a number of Github Actions in `./github/workflows`. 
-The actions enable a basic build run on commit, plus publication actions that are executed when
-a commit is tagged with a version number like `v0.*` or `v1.*`.

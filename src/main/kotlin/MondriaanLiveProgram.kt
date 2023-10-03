@@ -1,4 +1,5 @@
 import org.openrndr.*
+import org.openrndr.animatable.Animatable
 import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.Drawer
 import org.openrndr.draw.rectangleBatch
@@ -10,7 +11,7 @@ val GOLDEN_RATIO = 1.618033988749894
 
 fun Double.round(decimals: Int = 2): Double = "%.${decimals}f".format(this).toDouble()
 
-abstract class DrawableWithContext(drawer: Drawer) : Drawable
+abstract class DrawableWithContext() : Drawable
 
 interface Drawable {
     fun draw()
@@ -27,7 +28,7 @@ class Container(
     var rectangles: Collection<Rect> = ArrayList(),
     private val recursive: Int,
     private val colors: Collection<ColorRGBa>
-) : DrawableWithContext(drawer) {
+) : DrawableWithContext() {
     init {
         val horizontalWidths = divide(arrayListOf(this.width), this.recursive)
         val verticalWidths = divide(arrayListOf(this.height), this.recursive)
@@ -82,32 +83,35 @@ class Rect(
     var speed: Double = 2.0,
     var xDirection: Int = arrayOf(1, -1).random(),
     var yDirection: Int = arrayOf(1, -1).random(),
-) : DrawableWithContext(drawer) {
+) : Animatable(), Drawable {
 
     private val initialPosition: Pair<Double, Double> = Pair(x, y)
 
     override fun draw() {
-        if (markedForAnimation) {
-            if (this.x > drawer.width - this.width) {
-                xDirection = -1
+        this.apply {
+            if (markedForAnimation) {
+                if (this.x > drawer.width - this.width) {
+                    xDirection = -1
+                }
+                if (this.x < 0.0) {
+                    xDirection = 1
+                }
+                this.x =
+                    if (movingOrientation == MovingOrientation.HORIZONTAL) this.x + (speed * xDirection) else this.x
+                if (this.y > drawer.height - this.height) {
+                    yDirection = -1
+                }
+                if (this.y < 0.0) {
+                    yDirection = 1
+                }
+                this.y =
+                    if (movingOrientation == MovingOrientation.VERTICAL) this.y + (speed * yDirection) else this.y
             }
-            if (this.x < 0.0) {
-                xDirection = 1
-            }
-            this.x =
-                if (movingOrientation == MovingOrientation.HORIZONTAL) this.x + (speed * xDirection) else this.x
-            if (this.y > drawer.height - this.height) {
-                yDirection = -1
-            }
-            if (this.y < 0.0) {
-                yDirection = 1
-            }
-            this.y =
-                if (movingOrientation == MovingOrientation.VERTICAL) this.y + (speed * yDirection) else this.y
+            drawer.fill = color
+            drawer.stroke = borderColor
+            drawer.strokeWeight = 1.0
         }
-        drawer.fill = color
-        drawer.stroke = borderColor
-        drawer.strokeWeight = 1.0
+
         drawer.rectangle(x, y, width, height)
     }
 
@@ -287,6 +291,13 @@ fun main() = application {
                     it.rectangles.forEach { rect ->
                         rect.speed =
                             arrayOf(0.5, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0).random()
+                    }
+                }
+            }
+            if (it.key == KEY_F5) {
+                containers.forEach {
+                    it.rectangles.forEach { rect ->
+                        rect.color = rect.color.opacify(0.7)
                     }
                 }
             }
