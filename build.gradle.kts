@@ -32,7 +32,7 @@ val orxFeatures = setOf(
 //  "orx-keyframer",      
 //  "orx-kinect-v1",
 //  "orx-kotlin-parser",
-//  "orx-mesh-generators",
+  "orx-mesh-generators",
 //  "orx-midi",
   "orx-no-clear",
     "orx-noise",
@@ -79,10 +79,10 @@ val openrndrFeatures = setOf(
 
 /*  Which version of OPENRNDR and ORX should be used? */
 val openrndrUseSnapshot = false
-val openrndrVersion = if (openrndrUseSnapshot) "0.4.0-SNAPSHOT" else "0.3.58"
+val openrndrVersion = if (openrndrUseSnapshot) "0.4.3" else "0.3.58"
 
 val orxUseSnapshot = false
-val orxVersion = if (orxUseSnapshot) "0.4.0-SNAPSHOT" else "0.3.58"
+val orxVersion = if (orxUseSnapshot) "0.4.3" else "0.3.58"
 
 val ormlUseSnapshot = false
 val ormlVersion = if (ormlUseSnapshot) "0.4.0-SNAPSHOT" else "0.3.0-rc.5"
