@@ -1,12 +1,14 @@
 import org.openrndr.Fullscreen
 import org.openrndr.application
 import org.openrndr.color.ColorHSLa
+import org.openrndr.color.ColorHSVa
 import org.openrndr.draw.rectangleBatch
 import org.openrndr.extra.noclear.NoClear
 import org.openrndr.extra.noise.Random
 import org.openrndr.extra.olive.oliveProgram
 import org.openrndr.math.Vector2
 import org.openrndr.math.map
+import org.openrndr.shape.ShapeContour
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -34,8 +36,14 @@ fun main() = application {
 
         extend(NoClear())
         extend {
-            drawer.scale(0.5)
-            drawer.translate(width.toDouble(), height.toDouble())
+            val widthNormalized = map(0.0, width.toDouble(), 0.0, 1.0, width.toDouble())
+            val heightNormalized = map(0.0, height.toDouble(), 0.0, 1.0, height.toDouble())
+
+            val mouseXnormalized = map(0.0, width.toDouble(), 0.0, 1.0, mouse.position.x)
+            val mouseYnormalized = map(0.0, height.toDouble(), 0.0, 1.0, mouse.position.y)
+            val scale = 1.0
+            drawer.scale(scale)
+            drawer.translate(width.toDouble() / 2, height.toDouble() / 2)
             for (i in 0..amount) {
                 drawer.rectangleBatch {
                     locations.forEachIndexed { index, location ->
@@ -44,49 +52,61 @@ fun main() = application {
                         val cosValue = cos(index * seconds * 0.0005) * -sin(index * seconds * 0.001)
                         val sinNormalized = map(-1.0, 1.0, 0.0, 0.5, sinValue)
                         val cosNormalized = map(-1.0, 1.0, 0.0, 0.5, cosValue)
-                        val hueNormalized = map(-1.0, 1.0, 300.0, 360.0, sinValue)
+                        val hueNormalized = map(-1.0, 1.0, 0.0, 60.0, sinValue)
                         val opacity = map(0.0, 1.0, 0.0, 0.5, sinNormalized)
 //                        val colorHSVa = ColorHSLa(hueNormalized, cosValue, sinValue)
-                        val colorHSVa = ColorHSLa(hueNormalized, cosNormalized, sinValue) // black white yellow brown
+//                        val colorHSVa = ColorHSVa(hueNormalized, cosValue, sinValue) // black white yellow brown
+                        val colorHSVa = ColorHSVa(
+                            hueNormalized,
+                            mouseXnormalized,
+                            mouseYnormalized,
+                            opacity
+                        )
 //                        val colorHSVa = ColorHSLa(hueNormalized, cosNormalized, sinNormalized)
 //                        val colorHSVa = ColorHSLa(hueNormalized, cosValue, sinNormalized)
 //                        val colorHSVa = ColorHSLa(hueNormalized, cosValue, 0.0)
 
                         drawer.strokeWeight = sinNormalized
-                        if (index % 10 == 0) {
+                        if (index % amount == 0) {
                             //                        drawer.isolated {
 //                            drawer.rotate(30.0)
                             drawer.strokeWeight = sin(seconds * 0.1)
-                            drawer.stroke = colorHSVa.toRGBa().opacify(1.0)
-                            drawer.fill = colorHSVa.toRGBa().opacify(0.4)
+                            drawer.stroke = colorHSVa.toRGBa().opacify(sinNormalized)
+                            drawer.fill = colorHSVa.toRGBa().opacify(cosNormalized)
                             //                        }
                         } else {
                             drawer.fill = colorHSVa.toRGBa().opacify(0.1)
-//                            drawer.stroke = colorHSVa.toRGBa().opacify(opacity)
+                            drawer.stroke = colorHSVa.toRGBa().opacify(opacity)
                         }
                         drawer.circle(
                             location,
 //                            cosNormalized / cosValue * 20,
                             sinNormalized * sinValue * 20
                         )
+                        val shapeContour = ShapeContour.fromPoints(
+                            listOf(
+                                location,
+                                Random.vector2(width.toDouble(), height.toDouble())
+                            ), false
+                        )
 
 
 //                        drawer.translate(width.toDouble(), 0.0)
-                        drawer.translate(sin(seconds * 0.1) * width, 0.01 )
+                        drawer.translate(sin(seconds * 0.1) * width, 0.01)
 //                        drawer.translate(seconds * 0.1, 0.0)
                         drawer.translate(mouse.position.x, mouse.position.y)
                         drawer.translate(position)
                         position = Vector2(
-                            position.x + Random.perlin(position),
-                            position.y + Random.perlin(position)
+                            position.x + Random.perlin(position) * sinValue,
+                            position.y + Random.perlin(position) * cosValue
                         )
                         drawer.rotate(90.0)
 
-//                        drawer.rectangle(
-//                            location,
-//                            sinNormalized * sinValue * 50,
-//                            -cosNormalized / cosValue * 10
-//                        )
+                        drawer.rectangle(
+                            location,
+                            sinNormalized * sinValue * 50,
+                            -cosNormalized / cosValue * 10
+                        )
                         drawer.rectangle(
                             location,
                             hueNormalized * sinValue * 50,

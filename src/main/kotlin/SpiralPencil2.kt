@@ -44,7 +44,7 @@ fun main() = application {
                     drawer.circle(Vector2(x, y), thickness)
 //                        drawer.point(Vector2(x, y))
                 }
-                theta += 0.001
+                theta += 0.005
                 r += 0.05   //speed
 //                    scale *= 1.00001
 //                    thickness += 0.000005

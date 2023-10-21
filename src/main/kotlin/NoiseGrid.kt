@@ -1,6 +1,7 @@
 
 import org.openrndr.application
 import org.openrndr.color.ColorHSLa
+import org.openrndr.extra.noise.perlin
 import org.openrndr.extra.noise.simplex
 import org.openrndr.extra.olive.oliveProgram
 import org.openrndr.math.map
@@ -16,13 +17,16 @@ fun main() = application {
 
 
 
+
     oliveProgram {
+        val divider = 32
+        val step = width / divider
         extend {
-            val scale = 0.0005
-            for (y in 16 until height step 32) {
-                for (x in 16 until width step 32) {
-                    val simplex = simplex(100, x * seconds * scale, y * seconds * scale)
-                    val radius = simplex * 10.0 + 10.0
+            val scale = 0.005
+            for (y in divider until height step step) {
+                for (x in divider until width step step) {
+                    val simplex = perlin(100, x * seconds * scale, y * seconds * scale)
+                    val radius = simplex *10 + 10.0
                     val color = ColorHSLa(map(0.0, 1.0, 0.0, 70.0, simplex), sin(simplex), 0.5)
                     drawer.fill = color.toRGBa()
                     drawer.stroke = null

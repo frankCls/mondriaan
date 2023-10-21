@@ -95,10 +95,10 @@ fun main() = application {
                 rgb("#04a777")
             )
         )
-        val colorArray = org.openrndr.extra.noise.Random.pick(colorsArrays)
+//        val colorArray = org.openrndr.extra.noise.Random.pick(colorsArrays)
 
         var t = seconds
-//        val colorArray = colorsArrays[0]
+        val colorArray = colorsArrays[1]
         extend(NoClear()) {
             backdrop = {
                 drawer.fill = colorArray[4].opacify(0.4)
@@ -115,14 +115,14 @@ fun main() = application {
 
 //                val x1 = sin(t * vertical / i + t)
 //                val x1 = sin(t * vertical * i + t)
-//                val x1 = sin(t * cos(vertical) * i + t)
+                val x1 = sin(t * cos(vertical) * i + t)
 //                val x1 = t  / (cos(t) * i + t)
 //                val x1 = t  + (sin(t) * i - t)
 //                val x1 = tan(t * vertical  + t)
 //                val x1 = perlin(i,-t * sin(vertical)  + t)
 //                val x1 = perlin(( seconds).toInt(),-t * sin(vertical)  - i *2)
 //                val x1 = cubic(( seconds).toInt(),-t * sin(vertical)  - i *2)
-                val x1 = cubic(( seconds).toInt(),-t * sin(vertical)  - i *2)
+//                val x1 = cubic(( seconds).toInt(),-t * sin(vertical)  - i *2)
                 val x2 = tan(t * vertical  + t)
 
                 val xPos1 = (clockRadius * if (i % 2 == 0) cos(x1) else -cos(x1))
@@ -155,7 +155,7 @@ fun main() = application {
                 lastX = xPos1
 //                lastY = y
                 drawer.stroke = null
-                drawer.fill = colorArray[1]/*.opacify(0.2)*/
+                drawer.fill = colorArray[1].opacify(0.2)
                 drawer.rotate(sin(t) * horizontal)
             }
 

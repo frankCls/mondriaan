@@ -11,8 +11,8 @@ import kotlin.math.sin
 
 fun main() = application {
     configure {
-        width = 1000
-        height = 1000
+        width = 800
+        height = 800
         //        fullscreen = Fullscreen.CURRENT_DISPLAY_MODE
     }
 
@@ -26,7 +26,7 @@ fun main() = application {
                 ((index / horizontalNr).toDouble() * (width / horizontalNr))
             )
         }
-        val amount = 40
+        val amount = 17
         val angle = 360.0 / amount
 //        extend(NoClear())
         extend {
@@ -53,14 +53,15 @@ fun main() = application {
                             drawer.fill = colorHSVa.toRGBa().opacify(cosValue)
                             //                        }
                         } else {
+                            drawer.strokeWeight = cos(seconds * 0.1)
                             drawer.fill = colorHSVa.toRGBa().opacify(0.1)
 //                            drawer.stroke = colorHSVa.toRGBa().opacify(opacity)
                         }
-//                        drawer.circle(
-//                            location,
-////                            cosNormalized / cosValue * 20,
-//                            sinNormalized * sinValue * 20
-//                        )
+                        drawer.circle(
+                            location,
+//                            cosNormalized / cosValue * 20,
+                            sinNormalized * sinValue * 20
+                        )
 //                        drawer.translate(width.toDouble(), 0.0)
                         drawer.translate(sin(seconds * 0.01) * width, 0.0)
 //                        drawer.translate(mouse.position.x, 0.0)
